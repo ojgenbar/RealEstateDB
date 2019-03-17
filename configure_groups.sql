@@ -1,0 +1,15 @@
+CREATE ROLE viewer;
+CREATE ROLE editor;
+
+GRANT viewer to editor;
+
+REVOKE ALL PRIVILEGES ON SCHEMA public FROM public;
+
+GRANT USAGE ON SCHEMA public, spatial_data TO viewer;
+
+GRANT SELECT ON ALL TABLES IN SCHEMA public, spatial_data TO viewer;
+ALTER DEFAULT PRIVILEGES IN SCHEMA public, spatial_data GRANT SELECT ON TABLES TO viewer;
+
+GRANT SELECT,INSERT,UPDATE, DELETE ON ALL TABLES IN SCHEMA public, spatial_data TO editor;
+GRANT ALL PRIVILEGES ON ALL SEQUENCES IN SCHEMA public, spatial_data TO editor;
+ALTER DEFAULT PRIVILEGES IN SCHEMA public, spatial_data GRANT SELECT,INSERT,UPDATE ON TABLES TO editor;
