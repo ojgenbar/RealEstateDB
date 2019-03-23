@@ -62,7 +62,7 @@ CREATE SCHEMA spatial_data;
 CREATE TABLE spatial_data.kad (
     id serial PRIMARY KEY,
     geom geometry(MultiLineString,32636),
-    name character varying(137)
+    name character varying
 );
 CREATE INDEX kad_geom_index ON spatial_data.kad USING gist (geom);
 
@@ -70,15 +70,15 @@ CREATE INDEX kad_geom_index ON spatial_data.kad USING gist (geom);
 CREATE TABLE spatial_data.metro (
     id serial PRIMARY KEY,
     geom geometry(MultiPoint,32636),
-    name character varying(95)
+    name character varying
 );
 CREATE INDEX metro_geom_index ON spatial_data.metro USING gist (geom);
 
 
 CREATE TABLE spatial_data.parks (
-    id bigint NOT NULL,
+    id serial PRIMARY KEY,
     geom geometry(MultiPolygon,32636),
-    name character varying(254),
-    area double precision
+    name character varying,
+    area float
 );
 CREATE INDEX parks_geom_index ON spatial_data.parks USING gist (geom);
