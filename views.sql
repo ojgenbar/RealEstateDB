@@ -1,3 +1,5 @@
+-- Todo: use median instead of average
+
 CREATE VIEW public.address_view AS (
   SELECT a.id,
          d.name AS district_name,
