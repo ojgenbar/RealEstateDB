@@ -1,10 +1,12 @@
-CREATE DATABASE real_estate WITH
+\set database_name real_estate
+
+CREATE DATABASE :database_name WITH
     ENCODING = 'utf8'
     LC_COLLATE = 'English'
     LC_CTYPE = 'English'
 ;
 
-\c real_estate
+\c :database_name
 
 CREATE EXTENSION postgis;
 
