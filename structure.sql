@@ -11,22 +11,31 @@ CREATE DATABASE :database_name WITH
 CREATE EXTENSION postgis;
 
 
-CREATE TABLE districts(
-    id serial PRIMARY KEY,
-    name character varying
+-- Material type
+CREATE TYPE material_type AS ENUM (
+    'brick',
+    'monolith',
+    'panel',
+    'block',
+    'wood',
+    'stalin',
+    'monolithBrick',
+    'old'
 );
+
 
 
 CREATE TABLE addresses(
     id serial PRIMARY KEY,
-    district_id integer REFERENCES districts (id),
+    cian_id integer NOT NULL,
     ru_address character varying,
-    en_address character varying UNIQUE,
-    geom geometry(Point,4326),
-    building_type character varying,
+    geom geometry(Point,4326) NOT NULL,
+    material_type material_type,
+    year integer,
     floors integer
 );
 CREATE INDEX addresses_geom_index ON addresses USING gist (geom);
+CREATE UNIQUE INDEX addresses_cian_id_unique ON addresses USING btree (cian_id);
 
 
 CREATE TABLE flats (
@@ -34,26 +43,22 @@ CREATE TABLE flats (
     address_id integer REFERENCES addresses (id),
     qrooms integer,
     floor integer,
-    area numeric(10,3),
+    area numeric,
     kitchen_area character varying,
     living_area character varying,
-    bathroom character varying,
-    abilities character varying,
-    agency character varying,
-    tel character varying,
+    separate_wc_count character varying,
+    combined_wc_count character varying,
     description character varying,
-    bn_id integer,
-    ad_type integer,
-    link character varying UNIQUE,
-    UNIQUE (bn_id, ad_type)
+    cian_id integer,
+    link character varying
 );
+CREATE UNIQUE INDEX flats_cian_id_unique ON flats USING btree (cian_id);
 
 
 CREATE TABLE price_history (
     flat_id integer REFERENCES flats(id),
     observe_date date NOT NULL,
-    price numeric(10,3),
-    price_sqm numeric(20,15),
+    price numeric,
     PRIMARY KEY (flat_id, observe_date)
 );
 
