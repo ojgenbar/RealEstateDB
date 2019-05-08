@@ -142,11 +142,11 @@ BEGIN
 
   INSERT INTO spatial_data.distances
   SELECT a.id,
-         st_distance(a.geom, up.geom),
-         st_distance(a.geom, um.geom),
-         st_distance(a.geom, uk.geom),
-         st_distance(a.geom, usc.geom),
-         st_distance(a.geom, ukg.geom)
+         st_distance(st_transform(a.geom, 32636), up.geom),
+         st_distance(st_transform(a.geom, 32636), um.geom),
+         st_distance(st_transform(a.geom, 32636), uk.geom),
+         st_distance(st_transform(a.geom, 32636), usc.geom),
+         st_distance(st_transform(a.geom, 32636), ukg.geom)
   FROM addresses AS a,
        (SELECT st_union(p.geom) AS geom FROM spatial_data.parks AS p) AS up,
        (SELECT st_union(m.geom) AS geom FROM spatial_data.metro AS m) AS um,
