@@ -27,7 +27,7 @@ CREATE TYPE material_type AS ENUM (
 
 CREATE TABLE addresses(
     id serial PRIMARY KEY,
-    cian_id integer NOT NULL,
+    cian_id integer,
     ru_address character varying,
     geom geometry(Point,4326) NOT NULL,
     material_type material_type,
@@ -35,7 +35,7 @@ CREATE TABLE addresses(
     floors integer
 );
 CREATE INDEX addresses_geom_index ON addresses USING gist (geom);
-CREATE UNIQUE INDEX addresses_cian_id_unique ON addresses USING btree (cian_id);
+CREATE INDEX addresses_cian_id_index ON addresses USING btree (cian_id);
 
 
 CREATE TABLE flats (
@@ -44,15 +44,16 @@ CREATE TABLE flats (
     qrooms integer,
     floor integer,
     area numeric,
-    kitchen_area character varying,
-    living_area character varying,
-    separate_wc_count character varying,
-    combined_wc_count character varying,
+    kitchen_area numeric,
+    living_area numeric,
+    separate_wc_count integer,
+    combined_wc_count integer,
     description character varying,
     cian_id integer,
     link character varying
 );
 CREATE UNIQUE INDEX flats_cian_id_unique ON flats USING btree (cian_id);
+CREATE INDEX flats_address_id_index ON flats USING btree (address_id);
 
 
 CREATE TABLE price_history (
