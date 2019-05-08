@@ -118,14 +118,18 @@ CREATE INDEX kindergarten_geom_index ON spatial_data.kindergarten USING gist (ge
 
 CREATE TABLE spatial_data.distances
 (
-  address_id INTEGER PRIMARY KEY REFERENCES public.addresses (id) ON DELETE CASCADE,
-  parks      INTEGER NOT NULL,
-  metro      INTEGER NOT NULL,
-  kad        INTEGER NOT NULL
+  address_id   INTEGER PRIMARY KEY REFERENCES public.addresses (id) ON DELETE CASCADE,
+  parks        INTEGER NOT NULL,
+  metro        INTEGER NOT NULL,
+  kad          INTEGER NOT NULL,
+  school       INTEGER NOT NULL,
+  kindergarten INTEGER NOT NULL
 );
 CREATE INDEX distances_park_index ON spatial_data.distances USING btree (parks);
 CREATE INDEX distances_metro_index ON spatial_data.distances USING btree (metro);
-CREATE INDEX distances_park_kad_index ON spatial_data.distances USING btree (kad);
+CREATE INDEX distances_kad_index ON spatial_data.distances USING btree (kad);
+CREATE INDEX distances_school_index ON spatial_data.distances USING btree (school);
+CREATE INDEX distances_kindergarten_index ON spatial_data.distances USING btree (kindergarten);
 
 
 CREATE OR REPLACE FUNCTION calculate_distances()
@@ -138,13 +142,17 @@ BEGIN
 
   INSERT INTO spatial_data.distances
   SELECT a.id,
-         st_distance(st_transform(a.geom, 32636), up.geom) AS park_distance,
-         st_distance(st_transform(a.geom, 32636), um.geom) AS metro_distance,
-         st_distance(st_transform(a.geom, 32636), uk.geom) AS kad_distance
+         st_distance(a.geom, up.geom),
+         st_distance(a.geom, um.geom),
+         st_distance(a.geom, uk.geom),
+         st_distance(a.geom, usc.geom),
+         st_distance(a.geom, ukg.geom)
   FROM addresses AS a,
        (SELECT st_union(p.geom) AS geom FROM spatial_data.parks AS p) AS up,
        (SELECT st_union(m.geom) AS geom FROM spatial_data.metro AS m) AS um,
-       (SELECT st_union(k.geom) AS geom FROM spatial_data.kad AS k) AS uk
+       (SELECT st_union(k.geom) AS geom FROM spatial_data.kad AS k) AS uk,
+       (SELECT st_union(sc.geom) AS geom FROM spatial_data.schools AS sc) AS usc,
+       (SELECT st_union(kg.geom) AS geom FROM spatial_data.kindergartens AS kg) AS ukg
     WHERE
        a.id = new.id;
   RETURN new;
